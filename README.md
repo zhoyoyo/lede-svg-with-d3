@@ -1,4 +1,4 @@
-# Lede 2024 Storytelling: Create SVG with D3
+# Lede 2025 Storytelling: Create SVG with D3
 
 An 8-step guide to create a simple SVG graphic with D3.js
 
@@ -15,7 +15,7 @@ An 8-step guide to create a simple SVG graphic with D3.js
 
 ## Preparation
 
-1. Create a basic html page. If you don't know how, refers to Soma’s tutorial: [How to create and host a web pages on Github](https://jonathansoma.com/fancy-github/github-pages/). For this tutorial, you can use `index.html` as a starter. 
+1. Create a basic html page. If you don't know how, refers to Soma’s tutorial: [How to create and host a web pages on Github](https://jonathansoma.com/fancy-github/github-pages/). For this tutorial, we will use `index.html` as a starter. 
 
 
 2. Add the d3 library to the page. For the purpose of this demo, we are loading the entire D3 library in one Javascript (js) file.  Add the following script to your HTML markup. 
@@ -26,30 +26,30 @@ An 8-step guide to create a simple SVG graphic with D3.js
     ```
 
 
-3. Prepare your data. For this demo, we are using `happiness-sample-data.csv`. 
-
-## Read data
-
-4. Load the data onto the webpage with `d3.csv` or `d3.json` ([🔗 to doc](https://github.com/d3/d3-fetch/tree/v3.0.1)) 
+3. Add data variables. For this demo, we will use Jeff Bezos' wedding cost data.
     - You will be doing this inside the `script` tag inside `head`.
 
+```
+// unit in million
+const bezosCost = 56, bezosWealth = 236000;
+const averageCost = 0.033, averageWealth = 0.1929;
 
-    ```
-    d3.csv("your-data-file.csv")
-        .then(data => {
-          // check if the data is loaded:
-          console.log(data)
-          
-          // == your code happens below ==
-        })
-    ```
+```
+
+## Transform data into usable scales
+
+4. Use `d3.scaleSqrt` ([🔗 to doc](https://observablehq.com/@d3/continuous-scales)) to calculate the appropriate radius based on values.  
+
+```
+// let's assume we want the max radius of the circles to be 100
+const scaleRadius = d3.scaleSqrt().domain([0, bezosWealth]).range([0, 100]);
+
+```
 
 ## Create web elements and bind data to them
 
-
 5. Create an overall SVG container for your graphic inside `#my-svg-chart` using `d3.select().append()`
     - Make sure you declare `width` and `height` for your SVG element with the chained `.attr()` function.
-    - Avoid using `d3.create()` if you don't know what you are doing.
         
         ```
         const myChart = d3
@@ -71,52 +71,45 @@ An 8-step guide to create a simple SVG graphic with D3.js
     - This code example uses a rectangle.
 
         ```
-        const individualCharts = myChart
-            .selectAll('rect')
-            .data(data)
-            .join('rect');
+        const circles = myChart
+            .selectAll('circle')
+            .data([circleData])
+            .join('circle');
         ```
 
 7. Tweak the attributes of the SVG shapes to position them at the right places.
 
 
     ```
-    const gridSize = 20, gap = 2; 
+    // with SVG circle-specific attributes
 
-    // with SVG rectangle-specific attributes
-
-    individualCharts
-        .attr('x', (d,i) => {
-            return Math.floor(i%10)*(gridSize+ gap);
-        })
-        .attr('y', (d,i) => {
-            return Math.floor(i/10)*(gridSize+ gap);
-        })
-        .attr('width', gridSize)
-        .attr('height', gridSize)
-    ```
-
-8. Encode data onto the SVG shapes using colors, sizes, directions, etc.
+    circles
+        .attr('cx', xPos)
+        .attr('cy', 100)
+        .attr('r', (d) => scaleRadius(d))
 
     ```
-    individualCharts
-        .style('fill', d=> {
-            if (d.Happiness == '1') {return 'black'}
-            if (d.Happiness == '2') {return 'grey'}
-            if (d.Happiness == '3') {return 'gold'}
-        });
+
+8. Change the style attributes of the SVG shapes to achieve desired effects
+
+    ```
+    // this creates alternative colors based on the index of the circle
+
+    circles
+        .style('fill', function(d,i) {
+          return i%2 == 0 ? '#ccc' : 'red'
+        })
 
     ```
 
 You're done. Good job.
 
 You can play around different SVG shapes/text/path, different ways of encoding your data...  
-- Encode data as size instead of colors? Using different shapes or even text?
-- Sort the data based on categories of variables?
-- Change the position of the data to compare length?
+- Use squares, bars instead of circles? 
+- Encode data as colors instead of shapes? 
+- Use a different dataset to create a different effect? 
 
 ... and don't forget to publish your page.
-     
 
 
 --- 
