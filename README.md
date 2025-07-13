@@ -77,6 +77,8 @@ const scaleRadius = d3.scaleSqrt().domain([0, bezosWealth]).range([0, 100]);
             .join('circle');
         ```
 
+## Manipulate the elements using attributes and styles 
+
 7. Tweak the attributes of the SVG shapes to position them at the right places.
 
 
@@ -93,7 +95,7 @@ const scaleRadius = d3.scaleSqrt().domain([0, bezosWealth]).range([0, 100]);
 8. Change the style attributes of the SVG shapes to achieve desired effects
 
     ```
-    // this creates alternative colors based on the index of the circle
+    // this creates alternating colors based on the index of the circle
 
     circles
         .style('fill', function(d,i) {
