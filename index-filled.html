@@ -16,72 +16,72 @@
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="custom.css">
 
-    <!-- add your d3 script -->
+    <!-- Step 2. add your d3 script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    
-    <!-- your JS code that uses d3 to manipulate data -->
-    <script>
-
-      // Step 4. load your data with d3.csv()
-      d3.csv("happiness-sample-data.csv")
-      // d3.json("happiness-sample-data.json")
-        .then(data => {
-
-          // check if the data is loaded:
-          console.log(data)
-
-          // == your code happens below ==
-          
-          // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
-          const myChart = d3
-            .select('#my-svg-chart')
-            .append('svg')
-            .attr('width', 640)
-            .attr('height', 640)
-
-
-          // Step 6. create SVG elements binded with data
-          const days = myChart
-            .selectAll('rect')
-            .data(data)
-            .join('rect');
-
-
-          // Step 7. Position the SVG shapes at the right places
-          const gridSize = 20, gap = 2;
-
-          days
-            // SVG rectangle specific attributes
-            .attr('x', (d,i) => {
-              return Math.floor(i%10)*(gridSize+ gap);
-            })
-            .attr('y', (d,i) => {
-              return Math.floor(i/10)*(gridSize+ gap);
-            })
-            .attr('width', gridSize)
-            .attr('height', gridSize)
-
-          // Step 8. Encode data onto the SVG shapes
-          days.style('fill', d=> {
-            if (d.Happiness == '1') {return 'black'}
-            else if (d.Happiness == '2') {return 'grey'}
-            else {return 'gold'}
-          })
-
-
-          // 
-
-
-        })
-
-    </script>
-
-
 
   </head>
   <body>
-    <h1>100 days of happiness</h1>
-    <p>My emotional ups-and-downs for the first 100 days of 2024</p>
+    <h1>Jeff Bezos’ wedding in Venice was relatively cheap</h1>
+    <p>This is how much Bezos <span style="color:red;font-weight: bold;">spent on his wedding</span> relative to <span style="color:#999;font-weight: bold;">his wealth</span> as compared to an average American.</p>
     <div id="my-svg-chart"></div>
+
+
+    <!-- your JS code that uses d3 to manipulate data -->
+    <script>
+      
+      // Step 3. add data variables
+      const bezosCost = 56,// 56, 
+            bezosWealth = 236000,// 236000,
+            averageCost = 7375,// 0.033, 
+            averageWealth = 236000// 0.1929;
+      
+      // Step 4. transform data into usable scales
+      const scaleRadius = d3.scaleSqrt().domain([0, bezosWealth]).range([0, 100]);
+      
+      // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
+      const myChart = d3.select('#my-svg-chart')
+        .append('svg')
+        .attr('width', 640)
+        .attr('height', 640)
+
+      // Step 6. create SVG elements binded with data
+      const circles = myChart
+        .selectAll('circle')
+        .data([bezosWealth, bezosCost, averageWealth, averageCost])
+        .join('circle');
+
+      // Step 7. position the SVG shapes at the right places
+      circles
+        .attr('cx', function(d,i) {
+          // i == 0 : BezosCost, i == 1 : BezosWealth
+          if (i < 2) {return 100}
+          else {return 300}
+        })
+        .attr('cy', 100)
+        .attr('r', (d) => scaleRadius(d))
+
+      // Step 8. color the SVG shapes using style attributes
+      circles
+        .style('fill', function(d,i) {
+          return i%2 == 0 ? '#ccc' : 'red'
+        })
+
+      // Step 9. Add labels
+      myChart.append('text')
+        .attr('x', 100)
+        .attr('y', 220)
+        .text('Bezos')
+        .style('text-anchor','middle')
+
+      myChart.append('text')
+        .attr('x', 300)
+        .attr('y', 220)
+        .text('Average American')
+        .style('text-anchor','middle')
+
+
+
+    </script>
+
   </body>
 </html>
