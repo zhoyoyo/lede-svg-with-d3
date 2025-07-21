@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+
+    <!-- some basic stuff  -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SVG with D3</title>
+
+    <!-- 
+      add your stylesheet 
+      base.css loads the basic stuff
+      you can tweak your css in custom.css
+      WARNING: the order of the stylesheets matters
+    -->
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="custom.css">
+
+    <!-- add your d3 script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    
+    <!-- your JS code that uses d3 to manipulate data -->
+    <script>
+
+      // Step 4. load your data with d3.csv()
+      d3.csv("happiness-sample-data.csv")
+      // d3.json("happiness-sample-data.json")
+        .then(data => {
+
+          // check if the data is loaded:
+          console.log(data)
+
+          // == your code happens below ==
+          
+          // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
+          const myChart = d3
+            .select('#my-svg-chart')
+            .append('svg')
+            .attr('width', 640)
+            .attr('height', 640)
+
+
+          // Step 6. create SVG elements binded with data
+          const squares = myChart
+            .selectAll('rect')
+            .data(data)
+            .join('rect');
+
+
+          // Step 7. Position the SVG shapes at the right places
+          const radius = 10;
+
+          squares
+            // SVG rectangle specific attributes
+            .attr('x', (d,i) => {
+              return Math.floor(i%10)*(radius*2)+radius;
+            })
+            .attr('y', (d,i) => {
+              return Math.floor(i/10)*(radius*2)+radius;
+            })
+            .attr('width', radius*2 - 1)
+            .attr('height', radius*2 - 1)
+            // .attr('r',radius)
+
+          // Step 8. Encode data onto the SVG shapes
+          squares.style('fill', d=> {
+            if (d.Happiness == '1') {return 'black'}
+            else if (d.Happiness == '2') {return 'grey'}
+            else {return 'gold'}
+          })
+
+          const labels = myChart
+            .selectAll('text')
+            .data(data)
+            .join('text');
+
+          labels
+            .attr('x', (d,i) => {
+                return Math.floor(i%10)*(radius*2)+radius + radius/2 ;
+              })
+              .attr('y', (d,i) => {
+                return Math.floor(i/10)*(radius*2)+radius + radius*3/2;
+              })
+            .text(d=> d.Happiness)
+            .on('mouseover', function(e){
+              const currentLabel = d3.select(this);
+              currentLabel.style('opacity',1);
+            })
+            .on('mouseout', function(){
+              const currentLabel = d3.select(this);
+              currentLabel.style('opacity',0);
+            })
+            
+            
+
+
+
+        })
+
+    </script>
+
+
+
+  </head>
+  <body>
+    <h1>100 days of happiness</h1>
+    <p>My emotional ups-and-downs for the first 100 days of 2024</p>
+    <div id="my-svg-chart"></div>
+  </body>
+</html>
