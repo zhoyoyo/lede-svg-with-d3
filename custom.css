@@ -13,7 +13,8 @@
 }
 
 #my-svg-chart text {
-    /* display: none; */
+    /* visibility: hidden; */
+    opacity: 0;
     font-family: sans-serif;    
 }
 

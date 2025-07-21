@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="custom.css">
 
     <!-- Step 2: add your d3 script below -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 
   </head>
   <body>
@@ -28,11 +29,51 @@
     <script>
 
       // Step 3. add data variables
+      // unit in million
+      const bezosCost = 56, bezosWealth = 236000;
+      const averageCost = 236000/ (0.1929/0.033), averageWealth = 236000;
+
       // Step 4. transform data into usable scales
+      // let's assume we want the max radius of the circles to be 100
+      const scaleRadius = 
+            d3
+            .scaleSqrt()
+            .domain([0, bezosWealth]) 
+            .range([0, 100]);
+
+
       // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
+      const svg = d3.select('#my-svg-chart')
+              .append('svg')
+              .attr('width', window.innerWidth)
+              .attr('height', 640)
+
       // Step 6. create SVG shapes binded with data, using d3.selectAll().data().join()
+      const circles = svg
+        .selectAll('circle')
+        .data([bezosWealth, bezosCost, averageWealth, averageCost])
+        .join('circle');
+
       // Step 7. tweak the attributes of the SVG shapes to position them at the right places
+      circles
+      .attr('cx', function(d,i) {
+        if (i < 2) {return 200}
+        else {return 400}        
+      })
+      .attr('cy', 100)
+      .attr('r', function(d){
+        return scaleRadius(d);
+      })
+
       // Step 8. color the SVG shapes using style attributes
+      circles
+      .style('fill', function(d,i){
+        if (i === 0 || i === 2) {
+          return 'grey'
+        } else {
+          return 'red'
+        }
+      })
 
     </script>
 
